@@ -1,77 +1,82 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE EmptyDataDecls             #-}
-{-# LANGUAGE FlexibleContexts           #-}
-{-# LANGUAGE FlexibleInstances          #-}
-{-# LANGUAGE GADTs                      #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE MultiParamTypeClasses      #-}
-{-# LANGUAGE QuasiQuotes                #-}
-{-# LANGUAGE TemplateHaskell            #-}
-{-# LANGUAGE TypeFamilies               #-}
-{-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE DataKinds #-}
-
-module Main (main) where
 
 import           Web.Spock
 import           Web.Spock.Config
-import           Data.Aeson       hiding (json)
-import           Data.Monoid      ((<>))
-import           Data.Text        (Text, pack)
+
+import           Data.Aeson hiding (json)
+import           Data.Text (Text, pack)
 import           GHC.Generics
-import           Control.Monad.Logger    (LoggingT, runStdoutLoggingT)
-import           Database.Persist        hiding (get) -- To avoid a naming clash with Web.Spock.get
-import qualified Database.Persist        as P         -- We'll be using P.get later for GET /people/<id>.
-import           Database.Persist.Sqlite hiding (get)
-import           Database.Persist.TH
 
-share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
-Person json -- The json keyword will make Persistent generate sensible ToJSON and FromJSON instances for us.
-  name Text
-  age Int
-  deriving Show
-|]
+data Person = Person
+  { name :: Text
+  , age  :: Int
+  } deriving (Generic, Show)
 
-type Api = SpockM SqlBackend () () ()
-type ApiAction a = SpockAction SqlBackend () () a
+instance ToJSON Person
 
-errorJson :: Int -> Text -> ApiAction ()
-errorJson code message =
-  json $
-    object
-    [ "result" .= String "failure"
-    , "error" .= object ["code" .= code, "message" .= message]
-    ]
+instance FromJSON Person
 
-runSQL :: (HasSpock m, SpockConn m ~ SqlBackend) => SqlPersistT (LoggingT IO) a -> m a
-runSQL action = runQuery $ \conn -> runStdoutLoggingT $ runSqlConn action conn
+data Correntista = Correntista
+  { idCorrentista :: Text
+  , nome :: Text
+  , cpf :: Text
+  , senha :: Text
+  } deriving (Generic, Show)
 
+instance ToJSON Correntista
+
+instance FromJSON Correntista
+
+data ContaCorrente = ContaCorrente
+  { correntistaId :: Text
+  , numConta :: Text
+  , saldo :: Double
+  } deriving (Generic, Show)
+
+instance ToJSON ContaCorrente
+
+instance FromJSON ContaCorrente
+
+data OperacaoFinanceira = OperacaoFinanceira
+  { contaCorrenteId :: Text
+  , contaOrigemId :: Text
+  , contaDestinoId :: Text
+  , valor :: Double
+  } deriving (Generic, Show)
+
+instance ToJSON OperacaoFinanceira
+
+instance FromJSON OperacaoFinanceira
+
+type Api = SpockM () () () ()
+
+type ApiAction a = SpockAction () () () a
 
 main :: IO ()
 main = do
-  pool <- runStdoutLoggingT $ createSqlitePool "api.db" 5
-  spockCfg <- defaultSpockCfg () (PCPool pool) ()
-  runStdoutLoggingT $ runSqlPool (do runMigration migrateAll) pool
+  spockCfg <- defaultSpockCfg () PCNoDatabase ()
   runSpock 8080 (spock spockCfg app)
-
 
 app :: Api
 app = do
   get "people" $ do
-    allPeople <- runSQL $ selectList [] [Asc PersonId]
-    json allPeople
-  get ("people" <//> var) $ \personId -> do
-    maybePerson <- runSQL $ P.get personId :: ApiAction (Maybe Person)
-    case maybePerson of
-      Nothing -> errorJson 2 "Could not find a person with matching id"
-      Just thePerson -> json thePerson
+    json [Person { name = "Fry", age = 25 }, Person { name = "Bender", age = 4 }]
+
   post "people" $ do
-    maybePerson <- jsonBody :: ApiAction (Maybe Person)
-    case maybePerson of
-      Nothing -> errorJson 1 "Failed to parse request body as Person"
-      Just thePerson -> do
-        newId <- runSQL $ insert thePerson
-        json $ object ["result" .= String "success", "id" .= newId]
+    thePerson <- jsonBody' :: ApiAction Person
+    text $ "Parsed: " <> pack (show thePerson)
+
+  get "correntistas" $ do
+    json [ Correntista { idCorrentista = "1", nome = "Marli", cpf = "123456789", senha = "amarelo123" }
+         , Correntista { idCorrentista = "2", nome = "Batista", cpf = "987654321", senha = "cantor457" }
+         ]
+
+  get "contas" $ do
+    json [ ContaCorrente { correntistaId = "1", numConta = "1001", saldo = 1000.0 }
+         , ContaCorrente { correntistaId = "2", numConta = "2001", saldo = 500.0 }
+         ]
+
+  post "operacoes" $ do
+    op <- jsonBody' :: ApiAction OperacaoFinanceira
+    text $ "Received operation: " <> pack (show op)
