@@ -33,6 +33,26 @@ Person json -- The json keyword will make Persistent generate sensible ToJSON an
   name Text
   age Int
   deriving Show
+
+Correntista json -- The json keyword will make Persistent generate sensible ToJSON and FromJSON instances for us.
+  idCorrentista Text
+  nome Text
+  cpf Text
+  senha Text
+  deriving Show
+
+ContaCorrente json
+  correntistaId Text
+  numConta Text
+  saldo Double
+  deriving Show
+
+OperacaoFinanceira json
+  contaCorrenteId Text
+  contaOrigemId Text
+  contaDestinoId Text
+  valor Double
+  deriving Show
 |]
 
 type Api = SpockM SqlBackend () () ()
@@ -75,3 +95,13 @@ app = do
       Just thePerson -> do
         newId <- runSQL $ insert thePerson
         json $ object ["result" .= String "success", "id" .= newId]
+  
+  get "correntistas" $ do
+    allCorrentista <- runSQL $ selectList [] [Asc CorrentistaId]
+    json allCorrentista
+  
+  get "contas" $ do
+    allContasCorrente <- runSQL $ selectList [] [Asc ContaCorrenteId]
+    json allContasCorrente
+  
+  
