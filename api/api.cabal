@@ -26,13 +26,23 @@ source-repository head
 library
   exposed-modules:
       Lib
+      Models
+      Types
   other-modules:
       Paths_api
   hs-source-dirs:
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.7 && <5
+      Spock
+    , aeson
+    , base >=4.7 && <5
+    , monad-logger
+    , persistent
+    , persistent-sqlite
+    , persistent-template
+    , text
+    , time
   default-language: Haskell2010
 
 executable api-exe
@@ -52,6 +62,7 @@ executable api-exe
     , persistent-sqlite
     , persistent-template
     , text
+    , time
   default-language: Haskell2010
 
 test-suite api-test

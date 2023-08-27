@@ -35,7 +35,15 @@ ghc-options:
 
 library:
   source-dirs: src
-
+  dependencies:
+    - aeson
+    - Spock
+    - text
+    - monad-logger
+    - persistent
+    - persistent-sqlite
+    - persistent-template
+    - time
 executables:
   api-exe:
     main:                Main.hs
@@ -53,7 +61,7 @@ executables:
     - persistent
     - persistent-sqlite
     - persistent-template
-
+    - time
 tests:
   api-test:
     main:                Spec.hs
