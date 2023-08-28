@@ -18,6 +18,7 @@ module Main (main) where
 
 import           Web.Spock
 import           Web.Spock.Config
+import           Network.Wai.Middleware.Cors
 import           Data.Aeson       hiding (json)
 import           Data.Monoid      ((<>))
 import           Data.Text        (Text, pack)
@@ -45,7 +46,6 @@ errorJson code message =
 runSQL :: (HasSpock m, SpockConn m ~ SqlBackend) => SqlPersistT (LoggingT IO) a -> m a
 runSQL action = runQuery $ \conn -> runStdoutLoggingT $ runSqlConn action conn
 
-
 main :: IO ()
 main = do
   pool <- runStdoutLoggingT $ createSqlitePool "api.db" 5
@@ -53,10 +53,33 @@ main = do
   runStdoutLoggingT $ runSqlPool (do runMigration migrateAll) pool
   runSpock 8080 (spock spockCfg app)
 
+corsPolicy :: CorsResourcePolicy
+corsPolicy = CorsResourcePolicy
+    { corsOrigins = Nothing  -- Defina aqui as origens permitidas (Nothing para permitir qualquer origem)
+    , corsMethods = ["GET", "POST"]
+    , corsRequestHeaders = ["Content-Type"]
+    , corsExposedHeaders = Nothing
+    , corsMaxAge = Nothing
+    , corsVaryOrigin = False
+    , corsRequireOrigin = False
+    , corsIgnoreFailures = False
+    }
 
 app :: Api
 app = do
-  -- Endpoints correntistas
+  -- Configuração do middleware CORS
+  middleware $ cors $ const $ Just corsPolicy
+  post "login" $ do
+    maybeLogin <- jsonBody :: ApiAction (Maybe Login)
+    case maybeLogin of
+      Nothing -> errorJson 500 "Failed to parse request body as Login"
+      Just (Login cpf senha) -> do
+        maybeCorrentista <- runSQL $ selectFirst [CorrentistaCpf ==. cpf, CorrentistaSenha ==. senha] []
+        case maybeCorrentista of
+          Nothing -> errorJson 404 "Invalid Login."
+          Just (Entity correntistaId correntista) -> do
+              json $ object ["result" .= String "success", "id" .= correntistaId]
+        
   get "correntista" $ do
     correntistas <- runSQL $ selectList [] [Asc CorrentistaId]
     json correntistas
@@ -96,6 +119,10 @@ app = do
         newId <- runSQL $ insert conta
         json $ object ["result" .= String "success", "id" .= newId]
   
+  get ("conta-corrente-por-correntista" <//> var) $ \correntistaId -> do
+    let correntistaIdKey = toSqlKey correntistaId :: P.Key Correntista
+    contas <- runSQL $ selectList [ContaCorrenteCorrentistaId ==. correntistaIdKey] []
+    json contas
 -- Fim endpoints conta
 
 -- Endpoints operação financeira

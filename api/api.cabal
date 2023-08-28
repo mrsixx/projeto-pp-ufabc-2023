@@ -63,6 +63,7 @@ executable api-exe
     , persistent-template
     , text
     , time
+    , wai-cors
   default-language: Haskell2010
 
 test-suite api-test

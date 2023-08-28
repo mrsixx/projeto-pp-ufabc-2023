@@ -62,6 +62,7 @@ executables:
     - persistent-sqlite
     - persistent-template
     - time
+    - wai-cors
 tests:
   api-test:
     main:                Spec.hs

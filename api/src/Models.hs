@@ -50,3 +50,21 @@ OperacaoFinanceira json
   tipo TipoOperacao
   deriving Show
 |]
+
+
+data Login = Login
+  { cpf :: Text
+  , senha :: Text
+  } deriving (Show)
+
+instance ToJSON Login where
+  toJSON (Login cpf senha) =
+      object [ "cpf" .= cpf
+              , "senha" .= senha
+              ]
+
+instance FromJSON Login where
+  parseJSON (Object v) = Login
+      <$> v .: "cpf"
+      <*> v .: "senha"
+  parseJSON _ = fail "Invalid Login JSON"
