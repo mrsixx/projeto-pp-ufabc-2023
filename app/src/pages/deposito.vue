@@ -1,5 +1,12 @@
 <script setup>
+import router from '@/router';
+import { useCorrentistaStore } from '@/stores/CorrentistaStore';
 import FormDeposito from '@/views/pages/form-layouts/FormDeposito.vue';
+const correntistaStore = useCorrentistaStore()
+onMounted(() => {
+  if(!correntistaStore.loaded)
+    router.replace('/login')
+})
 </script>
 
 <template>

@@ -15,6 +15,7 @@
     "@casl/vue": "^2.2.0",
     "@devindex/vue-mask": "^2.0.3",
     "@floating-ui/dom": "1.2.8",
+    "@mrmgomes/boleto-utils": "^1.2.0",
     "@vueuse/core": "^10.1.2",
     "@vueuse/math": "^10.1.2",
     "apexcharts-clevision": "^3.28.5",

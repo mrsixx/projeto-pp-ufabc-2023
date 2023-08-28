@@ -10,7 +10,7 @@ function depositar() {
   if (!form) return
 
   const floatValue = getFloatValue(valor.value)
-  apiService.depositar(correntistaStore.contaCorrente.id, floatValue)
+  apiService.depositar(correntistaStore.contaCorrentePrincipalId, floatValue)
 }
 
 function getFloatValue(v) {

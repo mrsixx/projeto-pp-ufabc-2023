@@ -4,7 +4,7 @@ import apiService from '@/services/api-service'
 export const useCorrentistaStore = defineStore('CorrentistaStore', {
   state: () => {
     return {
-      saldo: -1,
+      saldo: 0,
       correntista: {},
       contaCorrente: [],
       operacoes: []
@@ -36,5 +36,7 @@ export const useCorrentistaStore = defineStore('CorrentistaStore', {
     saldoFormatado: (state) => state.saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
     numConta: (state) => state.contaCorrente.length ? state.contaCorrente[0].numConta : '00000-00',
     nome: (state) => state.correntista.nome,
+    contaCorrentePrincipalId: (state) => state.contaCorrente[0].id,
+    loaded: (state) => state?.contataCorrente[0] !== undefined,
   }
 })
