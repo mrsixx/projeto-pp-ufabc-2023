@@ -13,69 +13,69 @@ import AnalyticsBankStatementEntry from './AnalyticsBankStatementEntry.vue'
 
 
 const deposits = [
-  {
-    title: 'Gumroad Account',
-    subtitle: 'Sell UI Kit',
-    amount: 4650,
-    logo: gumroad,
-  },
-  {
-    title: 'Mastercard',
-    subtitle: 'Wallet deposit',
-    amount: 92705,
-    logo: mastercardLabel,
-  },
-  {
-    title: 'Stripe Account',
-    subtitle: 'iOS Application',
-    amount: 957,
-    logo: stripe,
-  },
-  {
-    title: 'American Bank',
-    subtitle: 'American Bank',
-    amount: 6837,
-    logo: americanBank,
-  },
-  {
-    title: 'Bank Account',
-    subtitle: 'Wallet deposit',
-    amount: 8934,
-    logo: citiBank,
-  },
+//   {
+//     title: 'Gumroad Account',
+//     subtitle: 'Sell UI Kit',
+//     amount: 4650,
+//     logo: gumroad,
+//   },
+//   {
+//     title: 'Mastercard',
+//     subtitle: 'Wallet deposit',
+//     amount: 92705,
+//     logo: mastercardLabel,
+//   },
+//   {
+//     title: 'Stripe Account',
+//     subtitle: 'iOS Application',
+//     amount: 957,
+//     logo: stripe,
+//   },
+//   {
+//     title: 'American Bank',
+//     subtitle: 'American Bank',
+//     amount: 6837,
+//     logo: americanBank,
+//   },
+//   {
+//     title: 'Bank Account',
+//     subtitle: 'Wallet deposit',
+//     amount: 8934,
+//     logo: citiBank,
+//   },
 ]
 
 const withdraws = [
-  {
-    title: 'Google Adsense',
-    subtitle: 'Paypal deposit',
-    amount: -145.5,
-    logo: google,
-  },
-  {
-    title: 'Github Enterprise',
-    subtitle: 'Security & compliance',
-    amount: -1870,
-    logo: github,
-  },
-  {
-    title: 'Upgrade Slack Plan',
-    subtitle: 'Debit card deposit',
-    amount: -450,
-    logo: slack,
-  },
-  {
-    title: 'Digital Ocean',
-    subtitle: 'Cloud Hosting',
-    amount: -540,
-    logo: digitalOcean,
-  },
-  {
-    title: 'AWS Account',
-    subtitle: 'Choosing a Cloud Platform',
-    amount: -21,
-    logo: aws,
-  },
+//   {
+//     title: 'Google Adsense',
+//     subtitle: 'Paypal deposit',
+//     amount: -145.5,
+//     logo: google,
+//   },
+//   {
+//     title: 'Github Enterprise',
+//     subtitle: 'Security & compliance',
+//     amount: -1870,
+//     logo: github,
+//   },
+//   {
+//     title: 'Upgrade Slack Plan',
+//     subtitle: 'Debit card deposit',
+//     amount: -450,
+//     logo: slack,
+//   },
+//   {
+//     title: 'Digital Ocean',
+//     subtitle: 'Cloud Hosting',
+//     amount: -540,
+//     logo: digitalOcean,
+//   },
+//   {
+//     title: 'AWS Account',
+//     subtitle: 'Choosing a Cloud Platform',
+//     amount: -21,
+//     logo: aws,
+//   },
 ]
 </script>
 

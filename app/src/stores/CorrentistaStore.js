@@ -42,7 +42,7 @@ export const useCorrentistaStore = defineStore('CorrentistaStore', {
     saldoFormatado: (state) => state.saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
     numConta: (state) => state.contaCorrente.length ? state.contaCorrente[0].numConta : '00000-00',
     nome: (state) => state.correntista.nome,
-    contaCorrentePrincipalId: (state) => state.contaCorrente[0].id,
+    contaCorrentePrincipalId: (state) => state.loaded ? state.contaCorrente[0].id : 0,
     loaded: (state) => state?.contaCorrente[0] !== undefined,
   }
 })
