@@ -1,7 +1,7 @@
 <script setup>
 import apiService from '@/services/api-service';
 import { useCorrentistaStore } from '@/stores/CorrentistaStore';
-import { onMounted, watch } from 'vue';
+import { watch } from 'vue';
 const code = ref('')
 const vencimento = ref('')
 const valor = ref('0')
@@ -9,9 +9,6 @@ const form = ref(false)
 import { validarBoleto } from '@mrmgomes/boleto-utils'
 const correntistaStore = useCorrentistaStore()
 
-onMounted(() => {
-  code.value = '846100000013 123600801005 013093112343 923082510036'
-});
 watch(code, (newCode) => {
   try {
     const boleto = validarBoleto(newCode, 'LINHA_DIGITAVEL')
