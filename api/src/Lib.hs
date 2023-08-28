@@ -36,17 +36,17 @@ someFunc = putStrLn "someFunc"
 
 type ApiAction a = SpockAction SqlBackend () () a
 
--- getValorOperacao :: Int -> ((Entity OperacaoFinanceira) -> Double)
--- getValorOperacao contaId = (\operacao -> if operacaoFinanceiraContaOrigemId (entityVal operacao) == contaId then -1 * operacaoFinanceiraValor (entityVal operacao) else operacaoFinanceiraValor (entityVal operacao))
 getValor = operacaoFinanceiraValor . entityVal
 getOrigemId = operacaoFinanceiraContaOrigemId . entityVal
 
 -- baseado em quem está consultando o saldo, determina se o valor de uma operação é entrada ou saída
 getValorOperacao :: Int -> (Entity OperacaoFinanceira -> Double)
 getValorOperacao contaId = \operacao -> do
-    if (getOrigemId operacao) == toSqlKey (fromIntegral contaId)
-        then -1 * (getValor operacao)
-        else 1 * (getValor operacao)
+    let maybeOrigemId = getOrigemId operacao
+    let contaId' = toSqlKey (fromIntegral contaId)
+    case maybeOrigemId of
+        Just origemId | contaId' == origemId -> -1 * (getValor operacao) -- Dinheiro saindo
+        _ -> 1 * (getValor operacao)                                    -- Dinheiro entrando
 
 -- Calcula o saldo de um correntista baseado nas operações financeiras
 calcularSaldo :: Int -> [Entity OperacaoFinanceira] -> ApiAction Double

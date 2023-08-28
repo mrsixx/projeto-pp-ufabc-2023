@@ -13,6 +13,7 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Main (main) where
 
@@ -64,6 +65,15 @@ corsPolicy = CorsResourcePolicy
     , corsRequireOrigin = False
     , corsIgnoreFailures = False
     }
+
+obterOperacoesConta contaIdKey = runSQL $ selectList
+  [
+    FilterOr[
+      OperacaoFinanceiraContaOrigemId ==. contaIdKey,
+      OperacaoFinanceiraContaDestinoId ==. contaIdKey
+    ]
+  ]
+  [Desc OperacaoFinanceiraDataOperacao]
 
 app :: Api
 app = do
@@ -118,11 +128,6 @@ app = do
       Just conta -> do
         newId <- runSQL $ insert conta
         json $ object ["result" .= String "success", "id" .= newId]
-  
-  get ("conta-corrente-por-correntista" <//> var) $ \correntistaId -> do
-    let correntistaIdKey = toSqlKey correntistaId :: P.Key Correntista
-    contas <- runSQL $ selectList [ContaCorrenteCorrentistaId ==. correntistaIdKey] []
-    json contas
 -- Fim endpoints conta
 
 -- Endpoints operação financeira
@@ -143,11 +148,31 @@ app = do
       Just operacao -> do
         newId <- runSQL $ insert operacao
         json $ object ["result" .= String "success", "id" .= newId]
+
 -- Fim endpoints operacao-financeira
 
--- Endpoint saldo
-  get ("saldo" <//> var) $ \contaId -> do
-    let contaIdKey = toSqlKey (fromIntegral contaId) :: P.Key ContaCorrente
-    operacoes <- runSQL $ selectList [FilterOr [OperacaoFinanceiraContaOrigemId ==. contaIdKey, OperacaoFinanceiraContaDestinoId ==. contaIdKey]] [Desc OperacaoFinanceiraDataOperacao]
+-- Endpoint regras de negocio 
+  get ("operacoes-por-conta-id" <//> var) $ \(contaId :: Int) -> do
+    let contaIdKey = Just $ toSqlKey (fromIntegral contaId) :: Maybe (P.Key ContaCorrente)
+    operacoes <- obterOperacoesConta contaIdKey
+    json $ operacoes
+
+  get ("saldo" <//> var) $ \(contaId :: Int) -> do
+    let contaIdKey = Just $ toSqlKey (fromIntegral contaId) :: Maybe (P.Key ContaCorrente)
+    operacoes <- obterOperacoesConta contaIdKey
     saldo <- calcularSaldo contaId operacoes
     json $ object ["result" .= String "success", "saldo" .= saldo]
+  
+  
+  get ("conta-corrente-por-correntista" <//> var) $ \correntistaId -> do
+    let correntistaIdKey = toSqlKey correntistaId :: P.Key Correntista
+    contas <- runSQL $ selectList [ContaCorrenteCorrentistaId ==. correntistaIdKey] []
+    json contas
+
+  get "conta-corrente-por-num-conta" $ do
+    maybeNumConta <- param "numConta"
+    case maybeNumConta of
+      Nothing -> json $ object [ "result" .= String "failure", "error" .= object ["code" .= String "500", "message" .= String "Número da conta é obrigatório"]]
+      Just numConta -> do
+        contas <- runSQL $ selectList [ContaCorrenteNumConta ==. numConta] []
+        json contas

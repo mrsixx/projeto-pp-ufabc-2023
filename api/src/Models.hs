@@ -43,14 +43,13 @@ ContaCorrente json
   deriving Show
 
 OperacaoFinanceira json
-  contaOrigemId ContaCorrenteId
-  contaDestinoId ContaCorrenteId
+  contaOrigemId ContaCorrenteId Maybe
+  contaDestinoId ContaCorrenteId Maybe
   valor Double
   dataOperacao UTCTime
   tipo TipoOperacao
   deriving Show
 |]
-
 
 data Login = Login
   { cpf :: Text

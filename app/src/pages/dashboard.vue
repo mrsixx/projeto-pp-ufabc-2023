@@ -53,6 +53,8 @@ export default {
   },
   mounted() {
     this.correntistaId = parseInt(localStorage.getItem('pp-correntista-id'))
+    if(!this.correntistaId)
+      router.replace('/login')
     this.correntistaStore.load(this.correntistaId)
   },
   methods: {

@@ -20,6 +20,15 @@ class ApiService {
   carregarCorrentista(correntistaId) {
     return this.#httpClient.get(`/correntista/${correntistaId}`)
   }
+  
+  carregarOperacoesCorrentista(correntistaId) {
+    return this.#httpClient.get(`/operacoes-por-conta-id/${correntistaId}`)
+  }
+
+  carregarContaCorrentePorNumConta(numConta) {
+    return this.#httpClient.get('/conta-corrente-por-num-conta', { params: { numConta } })
+  }
+
   depositar(contaDestinoId, valor) {
     return this.#httpClient.post(`/operacao-financeira`, {
       valor,
@@ -28,7 +37,7 @@ class ApiService {
       tipo: "1"
     })
   }
-  
+
   pagar(contaOrigemId, valor) {
     return this.#httpClient.post(`/operacao-financeira`, {
       valor,
