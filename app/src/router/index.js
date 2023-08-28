@@ -13,6 +13,22 @@ const router = createRouter({
           component: () => import('../pages/dashboard.vue'),
         },
         {
+          path: 'deposito',
+          component: () => import('../pages/deposito.vue'),
+        },
+        {
+          path: 'pagamento',
+          component: () => import('../pages/pagamento.vue'),
+        },
+        {
+          path: 'transferencia',
+          component: () => import('../pages/transferencia.vue'),
+        },
+        {
+          path: 'extrato',
+          component: () => import('../pages/extrato.vue'),
+        },
+        {
           path: 'account-settings',
           component: () => import('../pages/account-settings.vue'),
         },
@@ -45,10 +61,6 @@ const router = createRouter({
         {
           path: 'login',
           component: () => import('../pages/login.vue'),
-        },
-        {
-          path: 'register',
-          component: () => import('../pages/register.vue'),
         },
         {
           path: '/:pathMatch(.*)*',

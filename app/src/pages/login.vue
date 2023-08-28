@@ -6,6 +6,7 @@ import authV1MaskLight from '@images/pages/auth-v1-mask-light.png'
 import authV1Tree2 from '@images/pages/auth-v1-tree-2.png'
 import authV1Tree from '@images/pages/auth-v1-tree.png'
 import { ref, computed } from 'vue'
+import apiService from '@/services/api-service'
 
 export default {
   setup() {
@@ -37,12 +38,9 @@ export default {
   methods: {
     submitForm() {
       const {cpf, password} = this.form
-      this.$http.post('/login', {
-        cpf,
-        senha: password,
-      })
-      .then(({data}) => this.authenticateLogin(data))
-      .catch(x => console.error('Erro ao realizar o login', x))
+      apiService.login(cpf, password)
+        .then(({data}) => this.authenticateLogin(data))
+        .catch(x => console.error('Erro ao realizar o login', x))
     },
     authenticateLogin(data){
       if(data.result === 'success') {
@@ -98,7 +96,7 @@ export default {
             <!-- cpf -->
             <VCol cols="12">
               <VTextField
-                v-mask="'###.###.###-##'"
+                v-mask-cpf
                 v-model="form.cpf"
                 label="CPF"
                 type="text"

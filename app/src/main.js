@@ -7,7 +7,7 @@ import router from '@/router'
 import '@core/scss/template/index.scss'
 import '@layouts/styles/index.scss'
 import '@styles/styles.scss'
-import axios from 'axios'
+import VueMask from '@devindex/vue-mask'
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 
@@ -17,12 +17,10 @@ loadFonts()
 // Create vue app
 const app = createApp(App)
 
+app.use(VueMask)
 // Use plugins
 app.use(vuetify)
 app.use(createPinia())
 app.use(router)
-app.config.globalProperties.$http = axios.create({
-  baseURL: process.env.VUE_API_DOMAIN_URL,
-})
 // Mount vue app
 app.mount('#app')

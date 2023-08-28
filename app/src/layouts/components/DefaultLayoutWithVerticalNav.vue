@@ -47,13 +47,13 @@ const upgradeBanner = computed(() => {
           to: '/dashboard',
         }"
       />
-      <VerticalNavLink
+      <!-- <VerticalNavLink
         :item="{
           title: 'Account Settings',
           icon: 'mdi-account-cog-outline',
           to: '/account-settings',
         }"
-      />
+      /> -->
 
       <!-- 👉 Pages -->
       <VerticalNavSectionTitle
@@ -63,27 +63,34 @@ const upgradeBanner = computed(() => {
       />
       <VerticalNavLink
         :item="{
-          title: 'Login',
-          icon: 'mdi-login',
-          to: '/login',
+          title: 'Transferências',
+          icon: 'mdi-bank-transfer',
+          to: '/transferencia',
         }"
       />
       <VerticalNavLink
         :item="{
-          title: 'Register',
-          icon: 'mdi-account-plus-outline',
-          to: '/register',
+          title: 'Pagamentos',
+          icon: 'mdi-barcode-scan',
+          to: '/pagamento',
         }"
       />
       <VerticalNavLink
         :item="{
-          title: 'Error',
-          icon: 'mdi-information-outline',
-          to: '/no-existence',
+          title: 'Depósito',
+          icon: 'mdi-piggy-bank-outline',
+          to: '/deposito',
+        }"
+      />
+      <VerticalNavLink
+        :item="{
+          title: 'Saldo e Extrato',
+          icon: 'mdi-scale-balance',
+          to: '/extrato',
         }"
       />
 
-      <!-- 👉 User Interface -->
+      <!-- 👉 User Interface 
       <VerticalNavSectionTitle
         :item="{
           heading: 'User Interface',
@@ -123,7 +130,7 @@ const upgradeBanner = computed(() => {
           icon: 'mdi-form-select',
           to: '/form-layouts',
         }"
-      />
+      />-->
     </template>
 
     

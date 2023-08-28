@@ -11,8 +11,7 @@ import slack from '@images/logos/slack.png'
 import stripe from '@images/logos/stripe.png'
 import AnalyticsBankStatementEntry from './AnalyticsBankStatementEntry.vue'
 
-
-const deposits = [
+const entries = [
   {
     title: 'Gumroad Account',
     subtitle: 'Sell UI Kit',
@@ -43,13 +42,10 @@ const deposits = [
     amount: 8934,
     logo: citiBank,
   },
-]
-
-const withdraws = [
   {
     title: 'Google Adsense',
     subtitle: 'Paypal deposit',
-    amount: -145.5,
+    amount: -145,
     logo: google,
   },
   {
@@ -84,10 +80,10 @@ const withdraws = [
     <VRow no-gutters>
       <VCol
         cols="12"
-        md="6"
+        md="12"
       >
         <VCardItem>
-          <VCardTitle>Entradas</VCardTitle>
+          <VCardTitle>Extrato</VCardTitle>
 
           <template #append>
             <a
@@ -100,39 +96,10 @@ const withdraws = [
         <VCardText>
           <VList class="card-list">
             <AnalyticsBankStatementEntry
-              v-for="(deposit, i) in deposits"
+              v-for="(entry,i) in entries"
               :key="i"
-              :entry="deposit"/>
-          </VList>
-        </VCardText>
-      </VCol>
-
-      <VDivider
-        :vertical="$vuetify.display.mdAndUp"
-        :inset="$vuetify.display.mdAndUp"
-      />
-
-      <VCol
-        cols="12"
-        md="6"
-      >
-        <VCardItem>
-          <VCardTitle>Saídas</VCardTitle>
-
-          <template #append>
-            <router-link
-              to="/extrato"
-              class="text-sm font-weight-medium"
-            >View All</router-link>
-          </template>
-        </VCardItem>
-
-        <VCardText>
-          <VList class="card-list">
-            <AnalyticsBankStatementEntry
-              v-for="(withdraw, i) in withdraws"
-              :key="i"
-              :entry="withdraw"/>
+              :entry="entry"
+            />
           </VList>
         </VCardText>
       </VCol>

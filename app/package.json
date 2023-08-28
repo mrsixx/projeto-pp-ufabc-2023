@@ -13,6 +13,7 @@
   "dependencies": {
     "@casl/ability": "^6.2.0",
     "@casl/vue": "^2.2.0",
+    "@devindex/vue-mask": "^2.0.3",
     "@floating-ui/dom": "1.2.8",
     "@vueuse/core": "^10.1.2",
     "@vueuse/math": "^10.1.2",
