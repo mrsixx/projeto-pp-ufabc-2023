@@ -76,9 +76,6 @@ export default {
       {{ getEntryTitleByOperationType() }}
     </VListItemTitle>
     <VListItemSubtitle class="text-xs">
-      {{ getEntryTitleByOperationType() }}
-    </VListItemSubtitle>
-    <VListItemSubtitle class="text-xs">
       {{ getFormattedDate() }}
     </VListItemSubtitle>
 

@@ -43,6 +43,10 @@ export const useCorrentistaStore = defineStore('CorrentistaStore', {
     numConta: (state) => state.contaCorrente.length ? state.contaCorrente[0].numConta : '00000-00',
     nome: (state) => state.correntista.nome,
     contaCorrentePrincipalId: (state) => state.loaded ? state.contaCorrente[0].id : 0,
+    operacoesEntrada: (state) => state.operacoes.filter(o => o.contaDestinoId === state.contaCorrentePrincipalId),
+    operacoesSaida: (state) => state.operacoes.filter(o => o.contaOrigemId === state.contaCorrentePrincipalId),
     loaded: (state) => state?.contaCorrente[0] !== undefined,
+    chequeEspecialUtilizado: (state) => state.saldo < 0 ? -1 * state.saldo : 0,
+    chequeEspecialUtilizadoFormatado: (state) => state.chequeEspecialUtilizado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
   }
 })

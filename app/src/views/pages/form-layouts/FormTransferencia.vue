@@ -1,8 +1,10 @@
 <script setup>
+import router from '@/router';
 import apiService from '@/services/api-service';
 import { useCorrentistaStore } from '@/stores/CorrentistaStore';
 import debounce from 'lodash.debounce'
-import { watch } from 'vue';
+import { watch, defineEmits } from 'vue';
+const emit = defineEmits(['showError'])
 const numConta = ref('')
 const valor = ref('0')
 const nome = ref('')
@@ -44,6 +46,13 @@ function transferir() {
 
   const floatValue = getFloatValue(valor.value)
   apiService.transferir(correntistaStore.contaCorrentePrincipalId,contaDestinoId.value, floatValue)
+    .then(({data}) => {
+      if(data.result === 'failure')
+        return emit('showError', data.error)
+      else
+        return router.push('/dashboard')
+    })
+    .catch(e => emit('showError', {code: 1, message: e.message}))
 }
 
 function getFloatValue(v) {

@@ -8,6 +8,8 @@ import { useTheme } from 'vuetify'
 const { global } = useTheme()
 const triangleBg = computed(() => global.name.value === 'light' ? triangleLight : triangleDark)
 const correntistaStore = useCorrentistaStore();
+const usandoCheque = correntistaStore.saldo < 0
+const showSaldo = ref(true)
 </script>
 
 <template>
@@ -17,12 +19,12 @@ const correntistaStore = useCorrentistaStore();
     class="position-relative"
   >
     <VCardText>
-      <h5 class="text-2xl font-weight-medium text-primary">
+      <h5 class="text-2xl font-weight-medium" :class="{'text-primary': !usandoCheque, 'text-error': usandoCheque, 'blur-saldo': !showSaldo}">
         {{correntistaStore.saldoFormatado}}
       </h5>
-      <p>78% of target 🚀</p>
-      <VBtn size="small">
-        View Sales
+      <br/>
+      <VBtn size="small" @click="showSaldo=!showSaldo" >
+        {{ showSaldo ? 'Esconder' : 'Exibir' }} saldo
       </VBtn>
     </VCardText>
 
@@ -30,12 +32,6 @@ const correntistaStore = useCorrentistaStore();
     <VImg
       :src="triangleBg"
       class="triangle-bg flip-in-rtl"
-    />
-
-    <!-- Trophy -->
-    <VImg
-      :src="trophy"
-      class="trophy"
     />
   </VCard>
 </template>
@@ -56,4 +52,9 @@ const correntistaStore = useCorrentistaStore();
   inset-block-end: 2rem;
   inset-inline-end: 2rem;
 }
+
+.blur-saldo {
+  filter: blur(1.5rem);
+}
 </style>
+

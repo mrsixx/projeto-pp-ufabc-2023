@@ -1,12 +1,14 @@
 <script setup>
 import apiService from '@/services/api-service';
 import { useCorrentistaStore } from '@/stores/CorrentistaStore';
-import { watch } from 'vue';
+import { watch, defineEmits } from 'vue';
 const code = ref('')
+const emit = defineEmits(['showError'])
 const vencimento = ref('')
 const valor = ref('0')
 const form = ref(false)
 import { validarBoleto } from '@mrmgomes/boleto-utils'
+import router from '@/router';
 const correntistaStore = useCorrentistaStore()
 
 watch(code, (newCode) => {
@@ -27,6 +29,13 @@ function pagar() {
 
   const floatValue = getFloatValue(valor.value)
   apiService.pagar(correntistaStore.contaCorrentePrincipalId, floatValue)
+    .then(({data}) => {
+      if(data.result === 'failure')
+        emit('showError', data.error)
+      else
+        router.push('/dashboard')
+    })
+    .catch(e => emit('showError', {code: 1, message: e.message}))
 }
 
 function getFloatValue(v) {

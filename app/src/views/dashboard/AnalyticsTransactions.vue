@@ -1,27 +1,31 @@
 <script setup>
+import { useCorrentistaStore } from '@/stores/CorrentistaStore';
+
+const correntistaStore = useCorrentistaStore()
+
 const statistics = [
   {
-    title: 'Sales',
-    stats: '245k',
-    icon: 'mdi-trending-up',
+    title: 'Entradas',
+    stats: correntistaStore.operacoesEntrada.length,
+    icon: 'mdi-bank-transfer-in',
     color: 'primary',
   },
   {
-    title: 'Customers',
-    stats: '12.5k',
-    icon: 'mdi-account-outline',
-    color: 'success',
-  },
-  {
-    title: 'Product',
-    stats: '1.54k',
-    icon: 'mdi-cellphone-link',
+    title: 'Maior entrada',
+    stats: Math.max.apply(Math, correntistaStore.operacoesEntrada.map(o => o.valor)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+    icon: 'mdi-currency-usd',
     color: 'warning',
   },
   {
-    title: 'Revenue',
-    stats: '$88k',
-    icon: 'mdi-currency-usd',
+    title: 'Saídas',
+    stats: correntistaStore.operacoesSaida.length,
+    icon: 'mdi-bank-transfer-out',
+    color: 'success',
+  },
+  {
+    title: 'Maior saída',
+    stats: Math.max.apply(Math, correntistaStore.operacoesSaida.map(o => o.valor)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+    icon: 'mdi-currency-usd-off',
     color: 'info',
   },
 ]
@@ -30,7 +34,7 @@ const statistics = [
 <template>
   <VCard>
     <VCardItem>
-      <VCardTitle>Transactions</VCardTitle>
+      <VCardTitle>Cheque Especial</VCardTitle>
 
       <template #append>
         <div class="me-n3">
@@ -40,14 +44,20 @@ const statistics = [
     </VCardItem>
 
     <VCardText>
-      <v-progress-linear
-      model-value="45"
-      height="10"
-      color="lime"
-    ></v-progress-linear>
+      <VProgressLinear
+        :model-value="correntistaStore.chequeEspecialUtilizado"
+        :max="150"
+        height="20"
+        reversed
+        color="error"
+      >
+        <template v-slot:default="{ value }">
+          <strong>{{ Math.ceil(value) }}%</strong>
+        </template>
+      </VProgressLinear>
       <h6 class="text-sm font-weight-medium mb-12">
-        <span>Total 48.5% Growth 😎</span>
-        <span class="font-weight-regular"> this month</span>
+        <span>Limite gasto este mês </span>
+        <span class="font-weight-regular">{{correntistaStore.chequeEspecialUtilizadoFormatado}}</span>
       </h6>
 
       <VRow>

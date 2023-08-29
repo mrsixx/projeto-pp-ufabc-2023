@@ -2,6 +2,9 @@
 import apiService from '@/services/api-service';
 import qrCode from '@images/pages/deposit-qr-code.png';
 import { useCorrentistaStore } from '@/stores/CorrentistaStore';
+import { defineEmits } from 'vue'
+import router from '@/router';
+const emit = defineEmits(['showError'])
 const valor = ref('0,0')
 const form = ref(false)
 const correntistaStore = useCorrentistaStore()
@@ -11,6 +14,13 @@ function depositar() {
 
   const floatValue = getFloatValue(valor.value)
   apiService.depositar(correntistaStore.contaCorrentePrincipalId, floatValue)
+    .then(({data}) => {
+      if(data.result === 'failure')
+        emit('showError', data.error)
+      else
+        router.push('/dashboard')
+    })
+    .catch(e => emit('showError', {code: 1, message: e.message}))
 }
 
 function getFloatValue(v) {

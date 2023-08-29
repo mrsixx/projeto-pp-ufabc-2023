@@ -141,14 +141,35 @@ app = do
       Nothing -> errorJson 404 "Could not find a OperacaoFinanceira entity with matching id."
       Just operacao -> json operacao
 
+  -- post "operacao-financeira" $ do
+  --   maybeOperacao <- jsonBody :: ApiAction (Maybe OperacaoFinanceira)
+  --   case maybeOperacao of
+  --     Nothing -> errorJson 500 "Failed to parse request body as OperacaoFinanceira"
+  --     Just operacao -> do
+
+  --       newId <- runSQL $ insert operacao
+  --       json $ object ["result" .= String "success", "id" .= newId]
   post "operacao-financeira" $ do
     maybeOperacao <- jsonBody :: ApiAction (Maybe OperacaoFinanceira)
     case maybeOperacao of
       Nothing -> errorJson 500 "Failed to parse request body as OperacaoFinanceira"
       Just operacao -> do
-        newId <- runSQL $ insert operacao
-        json $ object ["result" .= String "success", "id" .= newId]
-
+        let maybeContaOrigemId = operacaoFinanceiraContaOrigemId operacao
+            valor = operacaoFinanceiraValor operacao
+        case maybeContaOrigemId of
+          Nothing -> do
+            newId <- runSQL $ insert operacao
+            json $ object ["result" .= String "success", "id" .= newId]
+          Just contaOrigemId -> do
+            operacoesOrigem <- obterOperacoesConta (Just contaOrigemId)
+            saldoAtual <- calcularSaldo (fromIntegral $ fromSqlKey contaOrigemId) operacoesOrigem
+            -- Verificar se o saldo é suficiente (considerando o cheque especial pré-aprovado de 150,00)
+            if (saldoAtual + 150) >= valor
+              then do
+                newId <- runSQL $ insert operacao
+                json $ object ["result" .= String "success", "id" .= newId]
+              else
+                errorJson 400 "Saldo insuficiente para a operação"
 -- Fim endpoints operacao-financeira
 
 -- Endpoint regras de negocio 

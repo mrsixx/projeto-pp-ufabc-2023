@@ -1,4 +1,5 @@
 <script setup>
+import { useCorrentistaStore } from '@/stores/CorrentistaStore';
 import { hexToRgb } from '@layouts/utils'
 import VueApexCharts from 'vue3-apexcharts'
 import { useTheme } from 'vuetify'
@@ -6,16 +7,16 @@ import { useTheme } from 'vuetify'
 const vuetifyTheme = useTheme()
 const currentTheme = controlledComputed(() => vuetifyTheme.name.value, () => vuetifyTheme.current.value.colors)
 const variableTheme = controlledComputed(() => vuetifyTheme.name.value, () => vuetifyTheme.current.value.variables)
-
+const correntistaStore = useCorrentistaStore()
 const series = [{
-  data: [
-    0,
-    20,
-    5,
-    30,
-    15,
-    45,
-  ],
+  name: 'Entrada',
+  color: 'green',
+  data: correntistaStore.operacoesEntrada.map(o => o.valor),
+},
+{
+  name: 'Saída',
+  color: 'red',
+  data: correntistaStore.operacoesSaida.map(o => o.valor),
 }]
 
 const chartOptions = controlledComputed(() => vuetifyTheme.name.value, () => {
@@ -42,7 +43,7 @@ const chartOptions = controlledComputed(() => vuetifyTheme.name.value, () => {
       lineCap: 'butt',
       curve: 'straight',
     },
-    colors: [currentTheme.value.primary],
+    colors: ['currentTheme.value.primary'],
     markers: {
       size: 6,
       offsetY: 4,
@@ -71,20 +72,23 @@ const chartOptions = controlledComputed(() => vuetifyTheme.name.value, () => {
 
 <template>
   <VCard>
+    <VCardItem>
+      <VCardTitle>Movimentação</VCardTitle>
+
+      <template #append>
+        <div class="me-n3">
+          <MoreBtn />
+        </div>
+      </template>
+    </VCardItem>
+
     <VCardText>
-      <h6 class="text-h6">
-        $86.4k
-      </h6>
       <VueApexCharts
         type="line"
         :options="chartOptions"
         :series="series"
-        :height="100"
+        :height="200"
       />
-
-      <p class="text-center font-weight-medium mb-0">
-        Total Profit
-      </p>
     </VCardText>
   </VCard>
 </template>
